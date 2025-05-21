@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cancer Risk Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px;
+      background: #f0f8f5;
+      color: #2c3e50;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      color: #34495e;
+      margin-bottom: 40px;
+    }
+
+    #risk {
+      font-size: 1.3em;
+      margin-top: 30px;
+      padding: 15px;
+      background: #fff6e0;
+      border-left: 6px solid #f39c12;
+      border-radius: 8px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    canvas {
+      display: block;
+      margin: auto;
+      max-width: 900px;
+    }
+
+    #downloadBtn {
+      display: block;
+      margin: 30px auto;
+      padding: 10px 20px;
+      background-color: #27ae60;
+      color: white;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #downloadBtn:hover {
+      background-color: #1e8449;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🩺 Your Cancer Risk Screening Report</h1>
+  <canvas id="riskChart" width="900" height="450"></canvas>
+  <div id="risk"></div>
+  <button id="downloadBtn">📄 Download Report as PDF</button>
+
+  <script>
+    console.log('Hello from JavaScript'); 
+    
+
+    const labels = [
+      "Weight Loss", "Fatigue", "Lump", "Bleeding", "Cough", "Pain",
+      "Skin Change", "Bowel Habit", "Swallowing", "Hoarse Voice",
+      "Urine Change", "Tobacco", "Alcohol", "Family History", "Illness/Stress"
+    ];
+
+    // Pass the user scores from Flask
+    const userScores = {{user_scores | tojson | safe }};
+    const globalAvg = {{ global_avg | tojson | safe }};
+
+    console.log('User Scores:', userScores);
+    console.log('Global Average:', globalAvg);
+    
+    // Map user scores and global averages to colors
+    const userColors = userScores.map(score => {
+    if (score > 2) {
+        return 'rgba(231, 76, 60, 0.8)'; // Red for above 2
+    } else if (score === 2) {
+        return 'rgba(255, 255, 0, 0.8)'; // Yellow for exactly 2
+    } else {
+        return 'rgba(39, 174, 96, 0.7)';  // Green for below 2
+    }
+});
+
+const globalColors = globalAvg.map(score => {
+    if (score > 2) {
+        return 'rgba(192, 57, 43, 0.8)';   // Red for above 2
+    } else if (score === 2) {
+        return 'rgba(255, 251, 0, 0.8)';   // Yellow for exactly 2
+    } else {
+        return 'rgba(155, 89, 182, 0.6)'; // Green for below 2
+    }
+});
+    // Create the chart
+    const ctx = document.getElementById('riskChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Your Score',
+            data: userScores,
+            backgroundColor: userColors,
+            borderRadius: 4
+          },
+          {
+            label: 'Global Avg',
+            data: globalAvg,
+            backgroundColor: globalColors,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.raw;
+              }
+            }
+          },
+          legend: {
+            position: 'top'
+          },
+          title: {
+            display: true,
+            text: 'Risk Factor Comparison',
+            color: '#2c3e50',
+            font: {
+              size: 18
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 4,
+            ticks: {
+              stepSize: 1
+            },
+            title: {
+              display: true,
+              text: 'Risk Score',
+              color: '#34495e'
+            }
+          }
+        }
+      }
+    });
+
+    // Bayesian Risk Estimate (true dynamic version)
+    const prior = 0.05; // Baseline cancer probability
+
+    // Assume each symptom slightly increases the odds
+    const likelihoodRatios = userScores.map(score => {
+      if (score === 0) return 0.9;
+      if (score === 1) return 1.2;
+      if (score === 2) return 1.6;
+      if (score === 3) return 2.2;
+    });
+
+    // Calculate the total likelihood and odds
+    const totalLikelihood = likelihoodRatios.reduce((acc, val) => acc * val, 1);
+    const odds = (prior / (1 - prior)) * totalLikelihood;
+    const posterior = odds / (1 + odds);
+    const riskPercentage = Math.min((posterior * 100).toFixed(2), 99.9);
+
+    // Output the cancer risk estimate message
+    document.getElementById('risk').innerHTML =
+      `<strong>Estimated Cancer Risk:</strong> <span style="color:#e74c3c;">${riskPercentage}%</span> based on your screening responses. ` +
+      'This is not a diagnosis—please consult a healthcare provider for a full evaluation. 💗';
+
+    // PDF Download functionality
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const element = document.body;
+      html2pdf().from(element).set({
+        margin: 0.5,
+        filename: 'cancer-risk-report.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      }).save();
+    });
+  </script>
+
+</body>
+</html>

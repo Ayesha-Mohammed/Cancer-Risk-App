@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health Profile</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #fceabb, #f8b500);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      max-width: 500px;
+      width: 90%;
+      overflow-y: auto;
+      max-height: 90vh;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #f8b500;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #e0a800;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Your Health Profile</h2>
+    <form action="{{ url_for('health_profile') }}" method="post">
+
+      <label for="age">Age:</label>
+      <input type="number" id="age" name="age" required />
+
+      <label for="gender">Gender:</label>
+      <select id="gender" name="gender" required>
+        <option value="">Select</option>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+      </select>
+
+      <label for="weight"> Have you lost weight without trying?</label>
+      <select id="weight" name="weight" required>
+        <option value="">Select</option>
+        <option value="Yes, more than 5kg">Yes, more than 5kg</option>
+        <option value="Yes, less than 5kg">Yes, less than 5kg</option>
+        <option value="No change">No change</option>
+      </select>
+
+      <label for="tired">Do you usually feel tired or weak most days?</label>
+      <select id="tired" name="tired"  required>
+        <option value="">Select</option>
+        <option value="Yes, Daily">Yes, daily </option>
+        <option value="sometimes">Sometimes</option>
+        <option value="Only after activity">Only after activity</option>
+        <option value="No, full energy">No, full energy</option>
+      </select>
+
+      <label for="lump">Have you noticed any lump or swelling in your body?</label>
+      <select id="lump" name="lump" required>
+        <option value="">Select</option>
+        <option value="Yes, its growing">Yes, its growing</option>
+        <option value="Yes, its small and unchnaged">Yes, its small and unchnaged</option>
+        <option value="Not sure">Not sure</option>
+        <option value="No">No</option>
+      </select>
+
+      <label for="bleeding">Are you experiancing any unexplained bleeding?</label>
+      <select id="bleeding" name="bleeding" required>
+        <option value="">Select</option>
+        <option value="Yes, from rectum">Yes, from rectum</option>
+        <option value="Yes, in urine">Yes, in urine</option>
+        <option value="Yes, when coughing">Yes, when coughing</option>
+        <option value="No bleeding at all">No bleeding at all</option>
+      </select>
+
+      <label for="cough">Have you had persistent coughing from the past 2 weeks?</label>
+      <select id="cough" name="cough" required>
+        <option value="">Select</option>
+        <option value="Yes, with mucus and blood">Yes, with mucus or blood</option>
+        <option value="Yes, dry cough">Yes, dry cough</option>
+        <option value="No, just short term cough">No, just short term cough</option>
+        <option value="No cough">No cough</option>
+      </select>
+
+      <label for="pain">Do you have any long-lasting pain anywhere in your body</label>
+      <select id="pain" name="pain" required>
+        <option value="">Select</option>
+        <option value="Yes, constant">Yes, constant</option>
+        <option value="Yes, on and off">Yes, on and off</option>
+        <option value="Only with movement">Only with movement</option>
+      </select>
+
+      <label for="spot">Have you noticed any change in a mole or spot on your skin?</label>
+      <select id="spot" name="spot" required>
+        <option value="">Select</option>
+        <option value="Yes, it changed color or shape">Yes, it changed color or shape</option>
+        <option value="Yes, it bleeds or itches">Yes, it bleeds or itches</option>
+        <option value="Not sure">Not sure</option>
+        <option value="No visible changes">No visible changes</option>
+      </select>
+
+      <label for="bowel_habits">Has your bowel habit changed recently</label>
+      <select id="bowel_habits" name="bowel_habits"  required>
+        <option value="">Select</option>
+        <option value="Yes, blood in stool">Yes, blood in stool</option>
+        <option value="Yes, frequent diarrhea">Yes, frequent diarrhea</option>
+        <option value="Yes, frequent constipation">Yes, frequent constipation</option>
+        <option value="No change">No change</option>
+      </select>
+
+      <label for="swallow">Do you have difficulty swallowing or constant indigestion?</label>
+      <select id="swallow" name="swallow" required>
+        <option value="">Select</option>
+        <option value="Yes, difficulty swallowing solids">Yes, difficulty swallowing solids</option>
+        <option value="Constant blaoting or heartburn">Constant bloating or heartburn</option>
+        <option value="none of the above">None of the above</option>
+      </select>
+
+      <label for="voice">Do you have hoarse voice lasting over 2 weeks?</label>
+      <select id="voice" name="voice" required>
+        <option value="">Select</option>
+        <option value="Always hoarse">Always hoarse</option>
+        <option value="Its improving">Its improving</option>
+        <option value="Just started">Just started</option>
+      </select>
+
+      <label for="urine">Have you developed changes in urine or urine color?</label>
+      <select id="urine" name="urine"  required>
+        <option value="">Select</option>
+        <option value="Yes, dark and bloody urine">Yes, dark and bloody urine</option>
+        <option value="Frequent or painful urination">Frequent or painful urination</option>
+        <option value="suddne urge to urinate">Sudden urge to urinate</option>
+        <option value="Its normal">Its normal</option>
+      </select>
+
+      <label for="alcohol">Do you drink alcohol? </label>
+      <select id="alcohol" name="alcohol"  required>
+        <option value="">Select</option>
+        <option value="Yes, daily">Yes, daily</option>
+        <option value="Weekly">Weekly</option>
+        <option value="I quit">I quit</option>
+        <option value="Never used">Never used</option>
+      </select>
+
+      <label for="smoking">Do you smoke or use tobacco products</label>
+      <select id="smoking" name="smoking" required>
+        <option value="">Select</option>
+        <option value="Yes, daily">Yes, daily</option>
+        <option value="Weekly">Weekly</option>
+        <option value="I Quit">I quit</option>
+        <option value="Never used">Never used</option>
+      </select>
+
+      <label for="stress">Are you living with any long-term ilness or stress?</label>
+      <select id="stress" name="stress" required>
+        <option value="">Select</option>
+        <option value="Yes, diagnosed condition(eg:Diabetes, thyroid)">Yes, diagnosed condition(eg: diabetes, thyroid)</option>
+        <option value="No, healthy overall">No, healthy overall</option> 
+        <option value="I'm unsure">I'm unsure</option>     
+      </select>
+
+      <label for="family">Has anyone in your family had cancer?</label>
+      <select id="family" name="family"  required>
+        <option value="">Select</option>
+        <option value="Yes, First degree relatives (parent/siblings)">Yes, First degree relatives (parent/siblings)</option>
+        <option value="Distant relative">distant relative</option>
+        <option value="I dont know">I dont know</option>
+        <option value="No one">No one</option>
+      </select>
+
+      <button type="submit">Submit Profile</button>
+    </form>
+  </div>
+</body>
+</html>
